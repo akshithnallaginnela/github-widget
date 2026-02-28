@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Contributions Widget</title>
+  <meta name="description" content="A beautiful GitHub contributions heatmap widget showing your real coding activity." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <div class="app-container">
+    <!-- Setup Panel (shown when no token is configured) -->
+    <div class="setup-panel" id="setupPanel">
+      <div class="setup-card glass-card">
+        <div class="setup-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+          </svg>
+        </div>
+        <h1 class="setup-title">GitHub Widget</h1>
+        <p class="setup-subtitle">Connect your GitHub account to see your real contribution data</p>
+        
+        <div class="input-group">
+          <label for="usernameInput">GitHub Username</label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <input type="text" id="usernameInput" placeholder="e.g. octocat" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="tokenInput">
+            Personal Access Token
+            <span class="optional-badge">optional</span>
+          </label>
+          <div class="input-wrapper">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+          </div>
+          <p class="input-hint">
+            A token with <code>read:user</code> scope gives more accurate data. 
+            <a href="https://github.com/settings/tokens/new?scopes=read:user&description=GitHub+Widget" target="_blank" rel="noopener">Create one →</a>
+          </p>
+        </div>
+
+        <button class="btn-primary" id="connectBtn" onclick="connectGitHub()">
+          <span class="btn-text">Connect & Launch</span>
+          <span class="btn-loader" id="connectLoader"></span>
+        </button>
+
+        <div class="error-message" id="setupError"></div>
+
+        <p class="setup-footer">
+          Your data stays local. Nothing is sent to any server except GitHub's API.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Widget (shown after connection) -->
+    <div class="widget-container hidden" id="widgetContainer">
+      <!-- Header -->
+      <header class="widget-header glass-card">
+        <div class="header-left">
+          <img class="avatar" id="userAvatar" src="" alt="Avatar" />
+          <div class="user-info">
+            <h1 class="display-name" id="displayName"></h1>
+            <p class="username" id="username"></p>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" id="refreshBtn" onclick="refreshData()" title="Refresh data">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+            </svg>
+          </button>
+          <button class="icon-btn" onclick="logout()" title="Change account">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card glass-card" id="statTotal">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="totalContributions">—</span>
+            <span class="stat-label">Total Contributions</span>
+          </div>
+        </div>
+        <div class="stat-card glass-card" id="statStreak">
+          <div class="stat-icon orange">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="currentStreak">—</span>
+            <span class="stat-label">Current Streak</span>
+          </div>
+        </div>
+        <div class="stat-card glass-card" id="statBest">
+          <div class="stat-icon purple">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="bestDay">—</span>
+            <span class="stat-label">Best Day</span>
+          </div>
+        </div>
+        <div class="stat-card glass-card" id="statAvg">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value" id="avgPerDay">—</span>
+            <span class="stat-label">Daily Average</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contribution Graph -->
+      <div class="graph-card glass-card">
+        <div class="graph-header">
+          <h2 class="graph-title">
+            <span id="graphContribCount"></span> contributions in the last year
+          </h2>
+          <div class="graph-legend">
+            <span class="legend-label">Less</span>
+            <div class="legend-cell" style="background: #161b22;"></div>
+            <div class="legend-cell" style="background: #0e4429;"></div>
+            <div class="legend-cell" style="background: #006d32;"></div>
+            <div class="legend-cell" style="background: #26a641;"></div>
+            <div class="legend-cell" style="background: #39d353;"></div>
+            <span class="legend-label">More</span>
+          </div>
+        </div>
+
+        <div class="graph-wrapper">
+          <div class="month-labels" id="monthLabels"></div>
+          <div class="graph-body">
+            <div class="day-labels">
+              <span></span>
+              <span>Mon</span>
+              <span></span>
+              <span>Wed</span>
+              <span></span>
+              <span>Fri</span>
+              <span></span>
+            </div>
+            <div class="contribution-grid" id="contributionGrid"></div>
+          </div>
+        </div>
+
+        <!-- Tooltip -->
+        <div class="tooltip" id="tooltip"></div>
+      </div>
+
+      <!-- Monthly Breakdown -->
+      <div class="monthly-card glass-card">
+        <h2 class="graph-title">Monthly Breakdown</h2>
+        <div class="monthly-bars" id="monthlyBars"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

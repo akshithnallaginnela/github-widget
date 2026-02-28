@@ -1,0 +1,24 @@
+{
+    "name": "github-widget",
+    "version": "1.0.0",
+    "description": "A beautiful always-on-top GitHub contributions desktop widget",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder --win portable",
+        "dev": "electron . --dev"
+    },
+    "author": "Akshith Nallaginnela",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^33.0.0"
+    },
+    "build": {
+        "appId": "com.akshith.github-widget",
+        "productName": "GitHub Widget",
+        "win": {
+            "target": "portable",
+            "icon": "icon.png"
+        }
+    }
+}

@@ -100,13 +100,15 @@ function createWindow() {
         }
     });
 
-    // If not always-on-top, send widget behind all other windows on startup
-    if (!settings.alwaysOnTop) {
-        sendWindowToBottom();
-    }
-
     mainWindow.loadFile('widget.html');
     mainWindow.setOpacity(settings.opacity);
+
+    // If not always-on-top, send widget behind all other windows once it's ready
+    if (!settings.alwaysOnTop) {
+        mainWindow.once('ready-to-show', () => {
+            sendWindowToBottom();
+        });
+    }
 
     // Save position when moved/resized
     mainWindow.on('moved', savePosition);

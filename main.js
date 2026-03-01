@@ -24,6 +24,7 @@ if (!gotLock) {
 let mainWindow = null;
 let tray = null;
 let isQuitting = false;
+let _sendingToBottom = false;
 
 // ---- Paths ----
 const POSITION_FILE = path.join(app.getPath('userData'), 'window-position.json');
@@ -98,6 +99,11 @@ function createWindow() {
         }
     });
 
+    // If not always-on-top, send widget behind all other windows on startup
+    if (!settings.alwaysOnTop) {
+        sendWindowToBottom();
+    }
+
     mainWindow.loadFile('widget.html');
     mainWindow.setOpacity(settings.opacity);
 
@@ -115,11 +121,13 @@ function createWindow() {
 
     mainWindow.on('closed', () => { mainWindow = null; });
 
-    // When widget loses focus and alwaysOnTop is off, 
-    // keep it visible but behind other windows
+    // When widget loses focus and alwaysOnTop is off,
+    // actively push it behind all other windows
     mainWindow.on('blur', () => {
-        if (!settings.alwaysOnTop && mainWindow && !mainWindow.isDestroyed()) {
-            // Widget naturally goes behind other windows when not focused
+        if (_sendingToBottom) return; // prevent recursive calls
+        const currentSettings = loadSettings();
+        if (!currentSettings.alwaysOnTop && mainWindow && !mainWindow.isDestroyed()) {
+            sendWindowToBottom();
         }
     });
 
@@ -302,6 +310,21 @@ function resizeWidget(w, h) {
     const s = loadSettings();
     s.width = w; s.height = h;
     saveSettings(s);
+}
+
+// Send the window to the bottom of the z-order (behind all other windows)
+function sendWindowToBottom() {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    _sendingToBottom = true;
+    try {
+        // Briefly set alwaysOnTop then turn it off.
+        // This forces the OS to re-evaluate z-order and push the window behind others.
+        mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+        mainWindow.setAlwaysOnTop(false);
+    } finally {
+        // Reset the guard after a short delay to allow the blur event to finish
+        setTimeout(() => { _sendingToBottom = false; }, 100);
+    }
 }
 
 // ---- IPC ----

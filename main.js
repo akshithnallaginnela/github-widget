@@ -10,6 +10,7 @@
 const { app, BrowserWindow, Tray, Menu, ipcMain, screen, nativeImage, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 // Suppress GPU cache warnings
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
@@ -313,18 +314,38 @@ function resizeWidget(w, h) {
 }
 
 // Send the window to the bottom of the z-order (behind all other windows)
+// Uses native Windows SetWindowPos API via PowerShell helper
+let _bottomTimer = null;
 function sendWindowToBottom() {
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    _sendingToBottom = true;
-    try {
-        // Briefly set alwaysOnTop then turn it off.
-        // This forces the OS to re-evaluate z-order and push the window behind others.
-        mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
-        mainWindow.setAlwaysOnTop(false);
-    } finally {
-        // Reset the guard after a short delay to allow the blur event to finish
-        setTimeout(() => { _sendingToBottom = false; }, 100);
-    }
+
+    // Debounce — avoid spawning PowerShell too frequently
+    if (_bottomTimer) clearTimeout(_bottomTimer);
+    _bottomTimer = setTimeout(() => {
+        _bottomTimer = null;
+        if (!mainWindow || mainWindow.isDestroyed()) return;
+
+        _sendingToBottom = true;
+
+        const hwndBuf = mainWindow.getNativeWindowHandle();
+        // Read the native window handle (64-bit on 64-bit Windows)
+        let hwndValue;
+        if (hwndBuf.length >= 8) {
+            hwndValue = hwndBuf.readBigUInt64LE(0).toString();
+        } else {
+            hwndValue = hwndBuf.readUInt32LE(0).toString();
+        }
+
+        const scriptPath = path.join(__dirname, 'set-bottom.ps1');
+        exec(
+            `powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${scriptPath}" -Hwnd "${hwndValue}"`,
+            { windowsHide: true },
+            (err) => {
+                if (err) console.error('sendWindowToBottom error:', err.message);
+                setTimeout(() => { _sendingToBottom = false; }, 100);
+            }
+        );
+    }, 50);
 }
 
 // ---- IPC ----

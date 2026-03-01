@@ -5,20 +5,34 @@
     "main": "main.js",
     "scripts": {
         "start": "electron .",
-        "build": "electron-builder --win portable",
-        "dev": "electron . --dev"
+        "dev": "electron . --dev",
+        "build": "electron-builder --win --dir",
+        "shortcut": "node create-shortcut.js"
     },
     "author": "Akshith Nallaginnela",
     "license": "MIT",
     "devDependencies": {
-        "electron": "^33.0.0"
+        "electron": "^33.0.0",
+        "electron-builder": "^25.1.8"
     },
     "build": {
         "appId": "com.akshith.github-widget",
         "productName": "GitHub Widget",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "main.js",
+            "preload.js",
+            "widget.html",
+            "index.html",
+            "styles.css",
+            "app.js",
+            "icon.png"
+        ],
         "win": {
-            "target": "portable",
-            "icon": "icon.png"
+            "icon": "icon.png",
+            "signAndEditExecutable": false
         }
     }
 }

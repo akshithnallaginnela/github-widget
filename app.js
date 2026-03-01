@@ -474,10 +474,42 @@ function renderGrid(data) {
 
     const { weeks } = data;
 
-    // Track months for labels
-    let lastMonth = -1;
-    let weekIndex = 0;
+    // Cell size: 13px cell + 3px gap = 16px per week column (from styles.css)
+    const CELL_TOTAL = 16;
+    const DAY_LABEL_WIDTH = 36;
 
+    // First pass: find where each month starts
+    const monthStarts = [];
+    let lastMonth = -1;
+    weeks.forEach((week, wi) => {
+        const firstDay = week.contributionDays[0];
+        if (firstDay) {
+            const monthNum = parseInt(firstDay.date.split('-')[1]) - 1;
+            if (monthNum !== lastMonth) {
+                lastMonth = monthNum;
+                monthStarts.push({ month: monthNum, weekIndex: wi });
+            }
+        }
+    });
+
+    // Build month labels with accurate positions
+    monthLabelEl.style.position = 'relative';
+    monthLabelEl.style.height = '16px';
+    monthLabelEl.style.marginLeft = DAY_LABEL_WIDTH + 'px';
+    monthLabelEl.style.marginBottom = '6px';
+
+    monthStarts.forEach((ms, i) => {
+        if (i > 0 && (ms.weekIndex - monthStarts[i - 1].weekIndex) < 3) return;
+        const label = document.createElement('span');
+        label.classList.add('month-label');
+        label.textContent = MONTH_NAMES[ms.month];
+        label.style.position = 'absolute';
+        label.style.left = (ms.weekIndex * CELL_TOTAL) + 'px';
+        label.style.whiteSpace = 'nowrap';
+        monthLabelEl.appendChild(label);
+    });
+
+    // Second pass: build grid cells
     weeks.forEach((week, wi) => {
         const weekEl = document.createElement('div');
         weekEl.classList.add('contrib-week');
@@ -494,10 +526,8 @@ function renderGrid(data) {
             const date = day.date;
             const count = day.contributionCount !== undefined ? day.contributionCount : (day.count || 0);
 
-            // Staggered animation
             cell.style.animationDelay = `${(wi * 7 + di) * 2}ms`;
 
-            // Tooltip events
             cell.addEventListener('mouseenter', (e) => {
                 const dateObj = new Date(date + 'T00:00:00');
                 const dateStr = `${MONTH_NAMES[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()}`;
@@ -519,20 +549,6 @@ function renderGrid(data) {
         });
 
         gridEl.appendChild(weekEl);
-
-        // Month labels
-        const firstDay = week.contributionDays[0];
-        if (firstDay) {
-            const monthNum = parseInt(firstDay.date.split('-')[1]) - 1;
-            if (monthNum !== lastMonth) {
-                lastMonth = monthNum;
-                const label = document.createElement('span');
-                label.classList.add('month-label');
-                label.textContent = MONTH_NAMES[monthNum];
-                label.style.width = '48px'; // ~3 weeks width
-                monthLabelEl.appendChild(label);
-            }
-        }
     });
 }
 

@@ -103,12 +103,15 @@ function createWindow() {
     mainWindow.loadFile('widget.html');
     mainWindow.setOpacity(settings.opacity);
 
-    // If not always-on-top, send widget behind all other windows once it's ready
-    if (!settings.alwaysOnTop) {
-        mainWindow.once('ready-to-show', () => {
+    mainWindow.webContents.once('did-finish-load', () => {
+        // Inform renderer of initial pin state so the UI matches settings
+        mainWindow.webContents.send('pin-changed', settings.alwaysOnTop);
+
+        // If not always-on-top, send widget behind all other windows once it's ready
+        if (!settings.alwaysOnTop) {
             sendWindowToBottom();
-        });
-    }
+        }
+    });
 
     // Save position when moved/resized
     mainWindow.on('moved', savePosition);

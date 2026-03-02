@@ -25,6 +25,7 @@
             "main.js",
             "preload.js",
             "widget.html",
+            "widget-app.js",
             "index.html",
             "styles.css",
             "app.js",
@@ -33,7 +34,23 @@
         ],
         "win": {
             "icon": "icon.png",
-            "signAndEditExecutable": false
+            "signAndEditExecutable": false,
+            "target": [
+                {
+                    "target": "msix",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "msix": {
+            "publisher": "CN=Your Publisher Name",
+            "identityName": "com.akshith.github-widget",
+            "displayName": "GitHub Widget",
+            "languages": [
+                "en-US"
+            ]
         }
     }
 }

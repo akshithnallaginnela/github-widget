@@ -38,8 +38,8 @@
             "target": "appx"
         },
         "appx": {
-            "identityName": "com.akshith.github-widget",
-            "publisher": "CN=Your Publisher Name",
+            "identityName": "AKSHITH.GitHubWidget",
+            "publisher": "CN=745B52D1-5598-4503-89F4-99D00C18BA0B",
             "publisherDisplayName": "Akshith Nallaginnela",
             "applicationId": "GitHubWidget",
             "displayName": "GitHub Widget"

@@ -492,6 +492,26 @@
             min-width: 0;
         }
 
+        .last-updated {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .badge-demo {
+            display: inline-flex;
+            align-items: center;
+            padding: 1px 6px;
+            margin-left: 6px;
+            border-radius: 999px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: rgba(188, 140, 255, 0.16);
+            color: var(--accent-purple);
+        }
+
         .stat-value {
             font-size: 0.88rem;
             font-weight: 800;
@@ -733,6 +753,75 @@
             font-weight: 600;
         }
 
+        /* ---- About Overlay ---- */
+        .about-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 120;
+        }
+
+        .about-dialog {
+            width: 280px;
+            max-width: 90vw;
+            background: var(--glass-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+            padding: 16px 16px 14px;
+        }
+
+        .about-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .about-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .about-close {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .about-body {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .about-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .about-ok-btn {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .about-ok-btn:hover {
+            background: var(--bg-secondary);
+        }
+
         /* ---- Resize Handle ---- */
         .resize-handle {
             position: absolute;
@@ -839,6 +928,7 @@
                     <div class="profile-info">
                         <div class="profile-name" id="displayName"></div>
                         <div class="profile-login" id="username"></div>
+                        <p class="last-updated" id="lastUpdated">Not updated yet</p>
                     </div>
                     <div class="profile-actions">
                         <button class="icon-btn" id="refreshBtn" onclick="refreshData()" title="Refresh">
@@ -847,6 +937,14 @@
                                 <polyline points="23 4 23 10 17 10" />
                                 <polyline points="1 20 1 14 7 14" />
                                 <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                            </svg>
+                        </button>
+                        <button class="icon-btn" onclick="openAbout()" title="About & Privacy">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <circle cx="12" cy="8" r="1" />
                             </svg>
                         </button>
                         <button class="icon-btn" onclick="logout()" title="Change account">
@@ -950,6 +1048,31 @@
 
         <!-- Tooltip -->
         <div class="tooltip" id="tooltip"></div>
+
+        <!-- About / Privacy -->
+        <div class="about-overlay hidden" id="aboutOverlay">
+            <div class="about-dialog">
+                <div class="about-header">
+                    <h2 class="about-title">About GitHub Widget</h2>
+                    <button class="about-close" onclick="closeAbout()" aria-label="Close">
+                        ✕
+                    </button>
+                </div>
+                <div class="about-body">
+                    <p>This widget shows your real GitHub contributions using GitHub’s official APIs.</p>
+                    <p style="margin-top:6px;">Your username, optional token, and cached activity stay on this
+                        device only.</p>
+                    <p style="margin-top:6px;">Project home:
+                        <a href="https://github.com/yourname/github-widget" target="_blank" rel="noreferrer">
+                            github.com/yourname/github-widget
+                        </a>
+                    </p>
+                </div>
+                <div class="about-footer">
+                    <button class="about-ok-btn" onclick="closeAbout()">Got it</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="widget-app.js"></script>

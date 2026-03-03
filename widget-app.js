@@ -9,6 +9,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 const $ = (id) => document.getElementById(id);
 const isElectron = window.electronAPI?.isElectron || false;
+let lastUpdatedAt = null;
 
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,6 +53,17 @@ function togglePin() {
     if (isElectron) {
         window.electronAPI.toggleAlwaysOnTop();
     }
+}
+
+// ---- About dialog ----
+function openAbout() {
+    const el = $('aboutOverlay');
+    if (el) el.classList.remove('hidden');
+}
+
+function closeAbout() {
+    const el = $('aboutOverlay');
+    if (el) el.classList.add('hidden');
 }
 
 // ---- Storage ----
@@ -120,6 +132,8 @@ async function refreshData() {
     const cfg = loadConfig(); if (!cfg) return;
     localStorage.removeItem(CACHE_KEY);
     $('refreshBtn').classList.add('spinning');
+    const lu = $('lastUpdated');
+    if (lu) lu.textContent = 'Refreshing…';
     await loadContributions(cfg.username, cfg.token);
     setTimeout(() => $('refreshBtn').classList.remove('spinning'), 600);
 }
@@ -182,7 +196,15 @@ function generateDemo(username, userData) {
     }
     const weeks = [];
     for (let i = 0; i < days.length; i += 7) weeks.push({ contributionDays: days.slice(i, i + 7) });
-    return { name: userData?.name || username, login: userData?.login || username, avatar: userData?.avatar_url || `https://github.com/${username}.png`, totalContributions: total, days, weeks };
+    return {
+        name: userData?.name || username,
+        login: userData?.login || username,
+        avatar: userData?.avatar_url || `https://github.com/${username}.png`,
+        totalContributions: total,
+        days,
+        weeks,
+        isDemo: true
+    };
 }
 
 function getLevel(c) { return c === 0 ? 0 : c <= 3 ? 1 : c <= 6 ? 2 : c <= 9 ? 3 : 4; }
@@ -194,6 +216,19 @@ function renderAll(data) {
     $('username').textContent = '@' + data.login;
     $('totalContributions').textContent = data.totalContributions.toLocaleString();
     $('graphContribCount').textContent = data.totalContributions.toLocaleString();
+
+    // Demo badge
+    const nameEl = $('displayName');
+    if (nameEl) {
+        const existing = nameEl.querySelector('.badge-demo');
+        if (existing) existing.remove();
+        if (data.isDemo) {
+            const b = document.createElement('span');
+            b.className = 'badge-demo';
+            b.textContent = 'Demo data';
+            nameEl.appendChild(b);
+        }
+    }
 
     // Click through to profile in browser
     const avatar = $('userAvatar');
@@ -228,8 +263,39 @@ function renderAll(data) {
     const active = data.days.filter(d => d.count > 0).length;
     $('avgPerDay').textContent = active > 0 ? (data.totalContributions / active).toFixed(1) : '0';
 
+    // Last updated
+    lastUpdatedAt = new Date();
+    const lu = $('lastUpdated');
+    if (lu) {
+        const mins = 0;
+        lu.textContent = 'Updated just now';
+        setTimeout(updateLastUpdatedLabel, 60 * 1000);
+    }
+
     renderGrid(data);
     renderMonthly(data);
+}
+
+function updateLastUpdatedLabel() {
+    if (!lastUpdatedAt) return;
+    const lu = $('lastUpdated');
+    if (!lu) return;
+    const diffMs = Date.now() - lastUpdatedAt.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin <= 0) {
+        lu.textContent = 'Updated just now';
+    } else if (diffMin === 1) {
+        lu.textContent = 'Updated 1 min ago';
+    } else if (diffMin < 60) {
+        lu.textContent = `Updated ${diffMin} mins ago`;
+    } else {
+        const d = lastUpdatedAt;
+        const hh = d.getHours().toString().padStart(2, '0');
+        const mm = d.getMinutes().toString().padStart(2, '0');
+        lu.textContent = `Updated at ${hh}:${mm}`;
+    }
+    // keep it roughly fresh while app is open
+    setTimeout(updateLastUpdatedLabel, 10 * 60 * 1000);
 }
 
 function renderGrid(data) {

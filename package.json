@@ -6,7 +6,7 @@
     "scripts": {
         "start": "electron .",
         "dev": "electron . --dev",
-        "build": "electron-builder --win appx",
+        "build": "electron-builder --win",
         "shortcut": "node create-shortcut.js"
     },
     "author": "Akshith Nallaginnela",

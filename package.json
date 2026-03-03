@@ -6,7 +6,7 @@
     "scripts": {
         "start": "electron .",
         "dev": "electron . --dev",
-        "build": "electron-builder --win --dir",
+        "build": "electron-builder --win appx",
         "shortcut": "node create-shortcut.js"
     },
     "author": "Akshith Nallaginnela",
@@ -35,22 +35,14 @@
         "win": {
             "icon": "icon.png",
             "signAndEditExecutable": false,
-            "target": [
-                {
-                    "target": "msix",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ]
+            "target": "appx"
         },
-        "msix": {
-            "publisher": "CN=Your Publisher Name",
+        "appx": {
             "identityName": "com.akshith.github-widget",
-            "displayName": "GitHub Widget",
-            "languages": [
-                "en-US"
-            ]
+            "publisher": "CN=Your Publisher Name",
+            "publisherDisplayName": "Akshith Nallaginnela",
+            "applicationId": "GitHubWidget",
+            "displayName": "GitHub Widget"
         }
     }
 }

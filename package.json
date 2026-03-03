@@ -35,7 +35,7 @@
         "win": {
             "icon": "icon.png",
             "signAndEditExecutable": false,
-            "target": "appx"
+            "target": "nsis"
         },
         "appx": {
             "identityName": "AKSHITH.GitHubWidget",

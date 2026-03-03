@@ -6,7 +6,7 @@
     "scripts": {
         "start": "electron .",
         "dev": "electron . --dev",
-        "build": "electron-builder --win",
+        "build": "electron-builder --win appx",
         "shortcut": "node create-shortcut.js"
     },
     "author": "Akshith Nallaginnela",
@@ -34,8 +34,10 @@
         ],
         "win": {
             "icon": "icon.png",
-            "signAndEditExecutable": false,
-            "target": "nsis"
+            "target": "appx",
+            "signingHashAlgorithms": [
+                "sha256"
+            ]
         },
         "appx": {
             "identityName": "AKSHITH.GitHubWidget",

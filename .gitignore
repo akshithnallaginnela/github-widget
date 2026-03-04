@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 dist2/
+build_out/
 *.msix
 *.appx
 

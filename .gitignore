@@ -3,6 +3,9 @@ node_modules/
 
 # Build output
 dist/
+dist2/
+*.msix
+*.appx
 
 # Electron cache
 .electron/

@@ -1,7 +1,7 @@
 {
-    "name": "github-widget",
+    "name": "contribtracker",
     "version": "1.0.0",
-    "description": "A beautiful always-on-top GitHub contributions desktop widget",
+    "description": "A premium desktop widget to track your GitHub contributions in real-time.",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
@@ -16,8 +16,8 @@
         "electron-builder": "^25.1.8"
     },
     "build": {
-        "appId": "com.akshith.github-widget",
-        "productName": "GitHub Widget",
+        "appId": "com.akshith.contribtracker",
+        "productName": "ContribTracker",
         "directories": {
             "output": "dist"
         },
@@ -39,11 +39,11 @@
             "forceCodeSigning": false
         },
         "appx": {
-            "identityName": "AKSHITH.GitHubWidget",
+            "identityName": "AKSHITH.ContribTracker",
             "publisher": "CN=745B52D1-5598-4503-89F4-99D00C18BA0B",
             "publisherDisplayName": "Akshith Nallaginnela",
-            "applicationId": "GitHubWidget",
-            "displayName": "GitHub Widget"
+            "applicationId": "ContribTracker",
+            "displayName": "ContribTracker"
         }
     }
 }

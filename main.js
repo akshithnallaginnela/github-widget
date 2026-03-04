@@ -1,5 +1,5 @@
 /* ============================================
-   GitHub Widget — Desktop Widget (Fixed to Desktop)
+   ContribTracker — Desktop Widget (Fixed to Desktop)
    ============================================
    - Sits ON the desktop (below all other windows)
    - Working system tray with controls
@@ -148,7 +148,7 @@ function createTray() {
     const icon = nativeImage.createFromPath(iconPath);
 
     tray = new Tray(icon.resize({ width: 16, height: 16 }));
-    tray.setToolTip('GitHub Widget — Right-click for options');
+    tray.setToolTip('ContribTracker — Right-click for options');
 
     buildTrayMenu();
 
@@ -208,7 +208,7 @@ function buildTrayMenu() {
 
     const template = [
         {
-            label: 'GitHub Widget',
+            label: 'ContribTracker',
             enabled: false,
             icon: nativeImage.createFromBuffer(
                 Buffer.alloc(0)

@@ -143,30 +143,31 @@ function createWindow() {
 }
 
 // ---- Create Tray Icon ----
-const iconPath = path.join(__dirname, 'icon.png');
-const icon = nativeImage.createFromPath(iconPath);
+function createTray() {
+    const iconPath = path.join(__dirname, 'icon.png');
+    const icon = nativeImage.createFromPath(iconPath);
 
-tray = new Tray(icon.resize({ width: 16, height: 16 }));
-tray.setToolTip('GitHub Widget — Right-click for options');
+    tray = new Tray(icon.resize({ width: 16, height: 16 }));
+    tray.setToolTip('GitHub Widget — Right-click for options');
 
-buildTrayMenu();
+    buildTrayMenu();
 
-tray.on('click', () => {
-    if (mainWindow) {
-        if (mainWindow.isVisible()) {
-            mainWindow.focus();
-        } else {
-            mainWindow.show();
+    tray.on('click', () => {
+        if (mainWindow) {
+            if (mainWindow.isVisible()) {
+                mainWindow.focus();
+            } else {
+                mainWindow.show();
+            }
         }
-    }
-});
+    });
 
-tray.on('double-click', () => {
-    if (mainWindow) {
-        mainWindow.show();
-        mainWindow.focus();
-    }
-});
+    tray.on('double-click', () => {
+        if (mainWindow) {
+            mainWindow.show();
+            mainWindow.focus();
+        }
+    });
 }
 
 function createIconBase64() {

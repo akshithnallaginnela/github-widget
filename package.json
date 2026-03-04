@@ -19,7 +19,7 @@
         "appId": "com.akshith.github-widget",
         "productName": "GitHub Widget",
         "directories": {
-            "output": "dist2"
+            "output": "dist"
         },
         "files": [
             "main.js",

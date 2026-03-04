@@ -19,7 +19,7 @@
         "appId": "com.akshith.contribtracker",
         "productName": "ContribTracker",
         "directories": {
-            "output": "dist"
+            "output": "build_out"
         },
         "files": [
             "main.js",

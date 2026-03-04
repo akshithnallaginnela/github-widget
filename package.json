@@ -35,9 +35,7 @@
         "win": {
             "icon": "icon.png",
             "target": "appx",
-            "signingHashAlgorithms": [
-                "sha256"
-            ]
+            "forceCodeSigning": false
         },
         "appx": {
             "identityName": "AKSHITH.GitHubWidget",

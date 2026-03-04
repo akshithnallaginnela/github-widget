@@ -43,16 +43,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ---- Window Controls ----
+const getElectron = () => window.electronAPI;
+
 function minimizeWidget() {
-    if (isElectron) window.electronAPI.minimize();
+    const api = getElectron();
+    if (api) api.minimize();
 }
+
 function closeWidget() {
-    if (isElectron) window.electronAPI.close();
+    const api = getElectron();
+    if (api) api.close();
 }
+
 function togglePin() {
-    if (isElectron) {
-        window.electronAPI.toggleAlwaysOnTop();
-    }
+    const api = getElectron();
+    if (api) api.toggleAlwaysOnTop();
 }
 
 // ---- About dialog ----
@@ -232,10 +237,10 @@ function renderAll(data) {
 
     // Click through to profile in browser
     const avatar = $('userAvatar');
-    const nameEl = $('displayName');
+    const nameElInstance = $('displayName');
     const userEl = $('username');
     const profileUrl = `https://github.com/${data.login}`;
-    [avatar, nameEl, userEl].forEach((el) => {
+    [avatar, nameElInstance, userEl].forEach((el) => {
         if (!el) return;
         el.style.cursor = 'pointer';
         el.onclick = () => window.open(profileUrl, '_blank');

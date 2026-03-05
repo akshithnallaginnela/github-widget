@@ -1,4 +1,4 @@
-// GitHub Widget — Renderer logic extracted from widget.html
+// ContribTracker — Renderer logic extracted from widget.html
 
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql';
 const GITHUB_REST = 'https://api.github.com';
@@ -109,7 +109,7 @@ async function connectGitHub() {
     const err = $('setupError');
     const btn = $('connectBtn');
     err.textContent = '';
-    if (!username) { err.textContent = 'Enter your GitHub username.'; return; }
+    if (!username) { err.textContent = 'Enter your username.'; return; }
     btn.classList.add('loading'); btn.disabled = true;
     try {
         const r = await fetch(`${GITHUB_REST}/users/${username}`, {

@@ -1,5 +1,5 @@
 /* ============================================
-   GitHub Contributions Widget — Premium Design
+   ContribTracker Widget — Premium Design
    ============================================ */
 
 /* ---------- CSS Variables ---------- */
@@ -30,7 +30,7 @@
   --acrylic-border: rgba(255, 255, 255, 0.1);
   --acrylic-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 
-  /* Contribution colors (GitHub exact) */
+  /* Contribution colors */
   --contrib-0: #161b22;
   --contrib-1: #0e4429;
   --contrib-2: #006d32;

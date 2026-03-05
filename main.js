@@ -302,7 +302,7 @@ function buildTrayMenu() {
     ];
 
     // Remove the invalid icon entry
-    template[0] = { label: 'GitHub Widget', enabled: false };
+    template[0] = { label: 'ContribTracker', enabled: false };
 
     const contextMenu = Menu.buildFromTemplate(template);
     tray.setContextMenu(contextMenu);

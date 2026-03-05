@@ -1,5 +1,5 @@
 /* ============================================
-   GitHub Contributions Widget — App Logic
+   ContribTracker Widget — App Logic
    ============================================ */
 
 // ---- Constants ----
@@ -98,7 +98,7 @@ async function connectGitHub() {
     errorEl.textContent = '';
 
     if (!username) {
-        errorEl.textContent = 'Please enter your GitHub username.';
+        errorEl.textContent = 'Please enter your username.';
         $('usernameInput').focus();
         return;
     }
@@ -113,7 +113,7 @@ async function connectGitHub() {
         });
 
         if (!res.ok) {
-            throw new Error(res.status === 404 ? 'User not found. Check the username.' : `GitHub API error (${res.status})`);
+            throw new Error(res.status === 404 ? 'User not found. Check the username.' : `API error (${res.status})`);
         }
 
         saveConfig(username, token);

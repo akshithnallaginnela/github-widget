@@ -1,7 +1,7 @@
 {
     "name": "contribtracker",
     "version": "1.0.0",
-    "description": "A premium desktop widget to track your GitHub contributions in real-time.",
+    "description": "A premium desktop widget to track your contributions in real-time.",
     "main": "main.js",
     "scripts": {
         "start": "electron .",

@@ -34,7 +34,7 @@
         ],
         "win": {
             "icon": "icon.png",
-            "target": "dir",
+            "target": "appx",
             "signAndEditExecutable": false,
             "forceCodeSigning": false
         },
